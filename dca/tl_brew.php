@@ -5,7 +5,7 @@ $GLOBALS['TL_DCA']['tl_brew'] = array
     'config'    => array
     (
         'dataContainer'               => 'Table',
-        'ctable'                      => array(),
+        'ctable'                      => array('tl_brew_table'),
         'switchToEdit'                => true,
         'enableVersioning'            => true,
         'onload_callback' => array
@@ -52,7 +52,7 @@ $GLOBALS['TL_DCA']['tl_brew'] = array
             'edit' => array
             (
                 'label'               => &$GLOBALS['TL_LANG']['tl_brew']['edit'],
-                'href'                => 'table=tl_brew_tables',
+                'href'                => 'table=tl_brew_table',
                 'icon'                => 'edit.gif'
             ),
             'editheader' => array
@@ -89,8 +89,8 @@ $GLOBALS['TL_DCA']['tl_brew'] = array
     // Palettes
     'palettes' => array
     (
-        '__selector__'                => array(),
-        'default'                     => '{title_legend},title'
+        '__selector__'                => array(''),
+        'default'                     => '{title_legend},title;{backend_legend},isBeIndependent,beInsertAfter,icon'
     ),
 
     // Subpalettes
@@ -108,14 +108,115 @@ $GLOBALS['TL_DCA']['tl_brew'] = array
         (
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ),
-        'title' => array
-        (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_calendar']['title'],
+        'title' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew']['title'],
             'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
             'eval'                    => array('mandatory'=>true, 'maxlength'=>255),
             'sql'                     => "varchar(255) NOT NULL default ''"
         ),
+        'icon' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew']['icon'],
+            'exclude'                 => true,
+            'inputType'               => 'fileTree',
+            'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'mandatory'=>true, 'tl_class'=>'clr'),
+            'sql'                     => "binary(16) NULL",
+        ),
+        'isBeIndependent' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew']['isBeIndependent'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('submitOnChange'=>true, 'doNotCopy'=>true),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'beInsertAfter' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew']['beInsertAfter'],
+            'exclude'                 => true,
+            'inputType'               => 'select',
+            'options_callback'        => array('tl_brew', 'getActiveBackendModules'),
+            'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'includeBlankOption' => true),
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        )
     )
 );
+
+class tl_brew extends Backend
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->import('BackendUser', 'User');
+    }
+
+    public function getActiveBackendModules(DataContainer $dc)
+    {
+        $arrOptions = array();
+        $arrModules = array();
+
+        if($dc->activeRecord->isBeIndependent)
+        {
+            $arrModules = array_keys($GLOBALS['BE_MOD']);
+
+            foreach($arrModules as $key => $strGroupName)
+            {
+                $arrOptions[$strGroupName] = (($label = is_array($GLOBALS['TL_LANG']['MOD'][$strGroupName]) ? $GLOBALS['TL_LANG']['MOD'][$strGroupName][0] : $GLOBALS['TL_LANG']['MOD'][$strGroupName]) != false) ? $label : $strGroupName;
+            }
+        }
+        else
+        {
+            foreach($GLOBALS['BE_MOD'] as $strGroupName => $arrModuleNames)
+            {
+                $arrModules = array_keys($arrModuleNames);
+
+                $groupLabel = (($label = is_array($GLOBALS['TL_LANG']['MOD'][$strGroupName]) ? $GLOBALS['TL_LANG']['MOD'][$strGroupName][0] : $GLOBALS['TL_LANG']['MOD'][$strGroupName]) != false) ? $label : $strGroupName;
+
+                foreach($arrModules as $strModuleName)
+                {
+                    $arrOptions[$groupLabel][$strModuleName] = (($label = is_array($GLOBALS['TL_LANG']['MOD'][$strModuleName]) ? $GLOBALS['TL_LANG']['MOD'][$strModuleName][0] : $GLOBALS['TL_LANG']['MOD'][$strModuleName]) != false) ? $label : $strModuleName;
+                }
+            }
+        }
+
+        return $arrOptions;
+    }
+
+    /**
+     * Return the edit header button
+     * @param array
+     * @param string
+     * @param string
+     * @param string
+     * @param string
+     * @param string
+     * @return string
+     */
+    public function editHeader($row, $href, $label, $title, $icon, $attributes)
+    {
+        return $this->User->canEditFieldsOf('tl_brew') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
+    }
+
+    // TODO
+    public function copyBrew()
+    {
+
+    }
+
+    /**
+     * Return the delete brew button
+     * @param array
+     * @param string
+     * @param string
+     * @param string
+     * @param string
+     * @param string
+     * @return string
+     */
+    public function deleteBrew($row, $href, $label, $title, $icon, $attributes)
+    {
+        return $this->User->hasAccess('delete', 'brewp') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
+    }
+}

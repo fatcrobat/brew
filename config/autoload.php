@@ -26,5 +26,11 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
 	// Classes
-	'Fatcrobat\Brew\Hooks' => 'system/modules/brew/classes/Hooks.php',
+	'Fatcrobat\Brew\Brew'           => 'system/modules/brew/classes/Brew.php',
+	'Fatcrobat\Brew\BrewHooks'      => 'system/modules/brew/classes/BrewHooks.php',
+	'Fatcrobat\Brew\BrewTable'      => 'system/modules/brew/classes/BrewTable.php',
+
+	// Models
+	'Fatcrobat\Brew\BrewModel'      => 'system/modules/brew/models/BrewModel.php',
+	'Fatcrobat\Brew\BrewTableModel' => 'system/modules/brew/models/BrewTableModel.php',
 ));
