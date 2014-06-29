@@ -6,6 +6,7 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
     (
         'dataContainer'               => 'Table',
         'ptable'                      => 'tl_brew',
+        'ctable'                      => array('tl_brew_field', 'tl_brew_palette'),
         'switchToEdit'                => true,
         'enableVersioning'            => true,
         'onload_callback' => array
@@ -53,11 +54,17 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
         ),
         'operations' => array
         (
-            'edit' => array
+            'editFields' => array
             (
-                'label'               => &$GLOBALS['TL_LANG']['tl_brew_table']['edit'],
-                'href'                => 'table=tl_brew_table',
-                'icon'                => 'edit.gif'
+                'label'               => &$GLOBALS['TL_LANG']['tl_brew_table']['editFields'],
+                'href'                => 'table=tl_brew_field',
+                'icon'                => '/system/modules/brew/assets/icon-field.png'
+            ),
+            'editPalettes' => array
+            (
+                'label'               => &$GLOBALS['TL_LANG']['tl_brew_table']['editPalettes'],
+                'href'                => 'table=tl_brew_palette',
+                'icon'                => '/system/modules/brew/assets/icon-palette.png'
             ),
             'editheader' => array
             (
@@ -95,7 +102,8 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
     (
         '__selector__'                => array(),
         'default'                     => '{name_legend},name;
-                                          {config_legend},dataContainer,closed,notEditable,notDeletable,notSortable,notCopyable,notCreatable,switchToEdit,enableVersioning,doNotCopyRecords,doNotDeleteRecords'
+                                          {config_legend},dataContainer,closed,notEditable,notDeletable,notSortable,notCopyable,notCreatable,switchToEdit,enableVersioning,doNotCopyRecords,doNotDeleteRecords;
+                                          {list_legend},mode,flag,panelLayout,fields,headerFields,icon,root,filter,disableGrouping,child_record_class'
     ),
 
     // Subpalettes
@@ -250,6 +258,87 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
             (
             ),
             'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'mode' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['mode'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'select',
+            'default'                 => 1,
+            'options'                 => range(0,6),
+            'eval'                    => array
+            (
+                'mandatory'=>true,
+            ),
+            'sql'                     => "int(1) unsigned NULL"
+        ),
+        'flag' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['flag'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'select',
+            'default'                 => 1,
+            'options'                 => range(0,12),
+            'eval'                    => array
+            (
+                'mandatory'=>true,
+            ),
+            'sql'                     => "int(2) unsigned NULL"
+        ),
+        'panelLayout' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['panelLayout'],
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'default'                 => 'sort,filter;search,limit',
+            'eval'                    => array
+            (
+                'mandatory'=>true,
+            ),
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        ),
+        'fields' => array(),
+        'headerFields' => array(),
+        'icon' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['icon'],
+            'exclude'                 => true,
+            'inputType'               => 'fileTree',
+            'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'tl_class'=>'clr'),
+            'sql'                     => "binary(16) NULL",
+        ),
+        'root' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['root'],
+            'exclude'                 => true,
+            'inputType'               => 'pageTree',
+            'foreignKey'              => 'tl_page.title',
+            'eval'                    => array('fieldType'=>'radio'),
+            'sql'                     => "int(10) unsigned NOT NULL default '0'",
+            'relation'                => array('type'=>'hasOne', 'load'=>'eager')
+        ),
+        'filter' => array(),
+        'disableGrouping' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['disableGrouping'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'child_record_class' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['child_record_class'],
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "varchar(255) NOT NULL default ''"
         ),
     )
 );

@@ -30,6 +30,10 @@ class BrewTable extends Brew
             'palettes'  => $this->createPalettes(),
             'fields'    => $this->createFields(),
         );
+        
+        print '<pre>';
+        print_r($GLOBALS['TL_DCA'][$this->objItem->name]);
+        print '</pre>';
     }
 
     protected function createConfig()
@@ -40,6 +44,9 @@ class BrewTable extends Brew
         {
             return $arrConfig;
         }
+
+        // TODO: make editable via fields
+        $arrConfig['sql']['keys'] = array('id' => 'primary');
 
         foreach($this->arrFields['config'] as $name)
         {
@@ -53,6 +60,17 @@ class BrewTable extends Brew
     protected function createList()
     {
         $arrConfig = array();
+
+        if(!isset($this->arrFields['list']) && !is_array($this->arrFields['list']))
+        {
+            return $arrConfig;
+        }
+
+        foreach($this->arrFields['list'] as $name)
+        {
+            if($this->objItem->{$name} == '') continue;
+            $arrConfig[$name] = $this->objItem->{$name};
+        }
 
         return $arrConfig;
     }
@@ -69,7 +87,37 @@ class BrewTable extends Brew
     {
         $arrConfig = array();
 
+        $objFields = BrewFieldModel::findBy('pid', $this->objItem->id);
+
+        if($objFields === null) return $arrConfig;
+
+        // base fields
+        $arrConfig = array
+        (
+           'id' => array(
+               'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+           ),
+           'tstamp' => array
+            (
+                'sql'                     => "int(10) unsigned NOT NULL default '0'"
+            ),
+        );
+
+
+        while($objFields->next())
+        {
+            $arrConfig[$objFields->name] = array
+            (
+                'inputType' => $objFields->type,
+            );
+        }
+
         return $arrConfig;
+    }
+
+    protected function createField($objField)
+    {
+
     }
 
     protected function initConfigPalette()

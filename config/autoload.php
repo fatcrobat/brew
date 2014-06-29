@@ -31,6 +31,7 @@ ClassLoader::addClasses(array
 	'Fatcrobat\Brew\BrewTable'      => 'system/modules/brew/classes/BrewTable.php',
 
 	// Models
+	'Fatcrobat\Brew\BrewFieldModel' => 'system/modules/brew/models/BrewFieldModel.php',
 	'Fatcrobat\Brew\BrewModel'      => 'system/modules/brew/models/BrewModel.php',
 	'Fatcrobat\Brew\BrewTableModel' => 'system/modules/brew/models/BrewTableModel.php',
 ));
