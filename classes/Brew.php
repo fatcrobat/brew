@@ -27,11 +27,13 @@ class Brew extends \Controller
                 {
                     if($strModuleName == $objBrew->beInsertAfter)
                     {
+                        $arrTables = $objTables->fetchEach('name');
+
                         array_insert($GLOBALS['BE_MOD'][$strGroupName], $i + 1, array
                         (
                             $objBrew->name  => array
                             (
-                                'tables'      => $objTables->fetchEach('name'),
+                                'tables'      => array_values($arrTables),
                                // 'icon'        => 'system/modules/brew/assets/icon.png'
                             )
                         ));

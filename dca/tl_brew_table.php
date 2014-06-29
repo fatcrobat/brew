@@ -103,7 +103,7 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
         '__selector__'                => array(),
         'default'                     => '{name_legend},name;
                                           {config_legend},dataContainer,closed,notEditable,notDeletable,notSortable,notCopyable,notCreatable,switchToEdit,enableVersioning,doNotCopyRecords,doNotDeleteRecords;
-                                          {list_legend},mode,flag,panelLayout,fields,headerFields,icon,root,filter,disableGrouping,child_record_class'
+                                          {sorting_legend},mode,flag,panelLayout,fields,headerFields,icon,root,filter,disableGrouping,child_record_class'
     ),
 
     // Subpalettes
@@ -149,8 +149,8 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
             'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'select',
-            'default'                 => 'table',
-            'options'                 => array('table'),
+            'default'                 => 'Table',
+            'options'                 => array('Table'),
             'eval'                    => array
             (
                 'mandatory'=>true,

@@ -34,5 +34,23 @@ class BrewHooks extends Brew
         catch (\Exception $e){}
     }
 
+    public function sqlGetFromDcaHook($return)
+    {
+        $objTables = BrewTableModel::findAll();
+
+        if($objTables === null) return;
+
+        while($objTables->next())
+        {
+            $objExtract = new BrewDcaExtractor($objTables->name);
+
+            if ($objExtract->isDbTable())
+            {
+                $return[$objTables->name] = $objExtract->getDbInstallerArray();
+            }
+        }
+
+        return $return;
+    }
 
 }

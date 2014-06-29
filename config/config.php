@@ -19,7 +19,7 @@ array_insert($GLOBALS['BE_MOD']['system'], 1, array
  */
 $GLOBALS['TL_HOOKS']['initializeSystem'][] = array('Fatcrobat\Brew\BrewHooks', 'initializeSystemHook');
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('Fatcrobat\Brew\BrewHooks', 'loadDataContainerHook');
-
+$GLOBALS['TL_HOOKS']['sqlGetFromDca'][] = array('Fatcrobat\Brew\BrewHooks', 'sqlGetFromDcaHook');
 /**
  * Models
  */

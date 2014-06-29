@@ -30,10 +30,6 @@ class BrewTable extends Brew
             'palettes'  => $this->createPalettes(),
             'fields'    => $this->createFields(),
         );
-        
-        print '<pre>';
-        print_r($GLOBALS['TL_DCA'][$this->objItem->name]);
-        print '</pre>';
     }
 
     protected function createConfig()
@@ -61,15 +57,62 @@ class BrewTable extends Brew
     {
         $arrConfig = array();
 
-        if(!isset($this->arrFields['list']) && !is_array($this->arrFields['list']))
+        // TODO: make editable,  just for testing
+        $arrConfig = array
+        (
+            'global_operations' => array
+            (
+                'all' => array
+                (
+                    'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
+                    'href'                => 'act=select',
+                    'class'               => 'header_edit_all',
+                    'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
+                )
+            ),
+            'operations' => array
+            (
+                'editheader' => array
+                (
+                    'label'               => &$GLOBALS['TL_LANG']['tl_brew_table']['edit'],
+                    'href'                => 'act=edit',
+                    'icon'                => 'header.gif',
+                    'button_callback'     => array('tl_brew_table', 'editHeader')
+                ),
+                'copy' => array
+                (
+                    'label'               => &$GLOBALS['TL_LANG']['tl_brew_table']['copy'],
+                    'href'                => 'act=copy',
+                    'icon'                => 'copy.gif',
+                    'button_callback'     => array('tl_brew_table', 'copyTable')
+                ),
+                'delete' => array
+                (
+                    'label'               => &$GLOBALS['TL_LANG']['tl_brew_table']['delete'],
+                    'href'                => 'act=delete',
+                    'icon'                => 'delete.gif',
+                    'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+                    'button_callback'     => array('tl_brew_table', 'deleteTable')
+                ),
+                'show' => array
+                (
+                    'label'               => &$GLOBALS['TL_LANG']['tl_brew_table']['show'],
+                    'href'                => 'act=show',
+                    'icon'                => 'show.gif'
+                )
+            )
+        );
+
+        // TODO Refactor
+        if(!isset($this->arrFields['sorting']) && !is_array($this->arrFields['sorting']))
         {
             return $arrConfig;
         }
 
-        foreach($this->arrFields['list'] as $name)
+        foreach($this->arrFields['sorting'] as $name)
         {
-            if($this->objItem->{$name} == '') continue;
-            $arrConfig[$name] = $this->objItem->{$name};
+            if(empty($this->objItem->{$name})) continue;
+            $arrConfig['sorting'][$name] = $this->objItem->{$name};
         }
 
         return $arrConfig;
