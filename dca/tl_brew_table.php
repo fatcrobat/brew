@@ -30,8 +30,11 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
         (
             'mode'                    => 4,
             'fields'                  => array('name'),
-            'flag'                    => 1,
-            'panelLayout'             => 'filter;search,limit'
+            'headerFields'            => array('name'),
+            'panelLayout'             => 'filter;sort,search,limit',
+            'child_record_callback'   => array('tl_brew_table', 'listTables'),
+            'disableGrouping'         => true,
+            'child_record_class'      => 'no_padding'
         ),
         'label' => array
         (
@@ -91,7 +94,8 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
     'palettes' => array
     (
         '__selector__'                => array(),
-        'default'                     => '{name_legend},name'
+        'default'                     => '{name_legend},name;
+                                          {config_legend},dataContainer,closed,notEditable,notDeletable,notSortable,notCopyable,notCreatable,switchToEdit,enableVersioning,doNotCopyRecords,doNotDeleteRecords'
     ),
 
     // Subpalettes
@@ -107,7 +111,7 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
         ),
         'pid' => array
         (
-            'foreignKey'              => 'tl_brew.title',
+            'foreignKey'              => 'tl_brew.name',
             'sql'                     => "int(10) unsigned NOT NULL default '0'",
             'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
         ),
@@ -130,6 +134,122 @@ $GLOBALS['TL_DCA']['tl_brew_table'] = array
                 'nospace' => true
             ),
             'sql'                     => "varchar(255) NOT NULL default ''"
+        ),
+        'dataContainer'  => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['dataContainer'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'select',
+            'default'                 => 'table',
+            'options'                 => array('table'),
+            'eval'                    => array
+            (
+                'mandatory'=>true,
+            ),
+            'sql'                     => "varchar(32) NOT NULL default ''"
+        ),
+        'closed' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['closed'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'notEditable' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['notEditable'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'notDeletable' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['notDeletable'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'notSortable' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['notSortable'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'notCopyable' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['notCopyable'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'notCreatable' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['notCreatable'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'switchToEdit' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['switchToEdit'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'default'                 => true,
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'enableVersioning' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['enableVersioning'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'default'                 => true,
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'doNotCopyRecords' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['notEditable'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'doNotDeleteRecords' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew_table']['notEditable'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => array
+            (
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
         ),
     )
 );
@@ -178,4 +298,9 @@ class tl_brew_table extends Backend
         return $this->User->hasAccess('delete', 'brewp') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
     }
 
+
+    public function listTables($arrRow)
+    {
+        return '<div class="tl_content_left">' . $arrRow['name'] . '</div>';
+    }
 }

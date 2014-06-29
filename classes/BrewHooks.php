@@ -16,7 +16,8 @@ class BrewHooks extends Brew
 
             while($objTables->next())
             {
-               BrewTable::loadDca($objTables->id);
+               $objBrewTable = new BrewTable($objTables->id);
+               $objBrewTable->loadDca($objTables->id);
             }
         }
     }
@@ -26,7 +27,11 @@ class BrewHooks extends Brew
         // make sure, user object is loaded before database object
         // https://github.com/contao/core/issues/2236
         $this->import('BackendUser', 'User');
-        $this->addBackendModules();
+        // must catch Exceptions, because if fields do not exist in db, backend error will be thrown all time
+        try{
+            $this->addBackendModules();
+        }
+        catch (\Exception $e){}
     }
 
 

@@ -10,6 +10,7 @@ $GLOBALS['TL_DCA']['tl_brew'] = array
         'enableVersioning'            => true,
         'onload_callback' => array
         (
+            array('tl_brew', 'adjustDca')
         ),
         'onsubmit_callback' => array
         (
@@ -28,13 +29,13 @@ $GLOBALS['TL_DCA']['tl_brew'] = array
         'sorting' => array
         (
             'mode'                    => 1,
-            'fields'                  => array('title'),
+            'fields'                  => array('name'),
             'flag'                    => 1,
             'panelLayout'             => 'filter;search,limit'
         ),
         'label' => array
         (
-            'fields'                  => array('title'),
+            'fields'                  => array('name'),
             'format'                  => '%s'
         ),
         'global_operations' => array
@@ -90,7 +91,7 @@ $GLOBALS['TL_DCA']['tl_brew'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => '{title_legend},title;{backend_legend},isBeIndependent,beInsertAfter,icon'
+        'default'                     => '{name_legend},name;{backend_legend},isBeIndependent,beInsertAfter,icon'
     ),
 
     // Subpalettes
@@ -108,20 +109,20 @@ $GLOBALS['TL_DCA']['tl_brew'] = array
         (
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ),
-        'title' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_brew']['title'],
+        'name' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_brew']['name'],
             'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
-            'eval'                    => array('mandatory'=>true, 'maxlength'=>255),
-            'sql'                     => "varchar(255) NOT NULL default ''"
+            'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'rgxp' => 'alias', 'unique'=>true),
+            'sql'                     => "varchar(255) NOT NULL default ''",
         ),
         'icon' => array
         (
             'label'                   => &$GLOBALS['TL_LANG']['tl_brew']['icon'],
             'exclude'                 => true,
             'inputType'               => 'fileTree',
-            'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'mandatory'=>true, 'tl_class'=>'clr'),
+            'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'mandatory'=>false, 'tl_class'=>'clr'),
             'sql'                     => "binary(16) NULL",
         ),
         'isBeIndependent' => array
@@ -150,6 +151,19 @@ class tl_brew extends Backend
     {
         parent::__construct();
         $this->import('BackendUser', 'User');
+    }
+
+    public function adjustDca(DataContainer $dc)
+    {
+        $objResult = \Database::getInstance()->prepare('SELECT * FROM tl_brew WHERE id = ?')->execute($dc->id);
+
+        if($objResult === null) return;
+
+        if($objResult->tstamp > 0)
+        {
+            // disable key fields if once created
+            $GLOBALS['TL_DCA']['tl_brew']['fields']['name']['eval']['disabled'] = true;
+        }
     }
 
     public function getActiveBackendModules(DataContainer $dc)

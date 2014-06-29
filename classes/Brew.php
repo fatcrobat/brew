@@ -29,7 +29,7 @@ class Brew extends \Controller
                     {
                         array_insert($GLOBALS['BE_MOD'][$strGroupName], $i + 1, array
                         (
-                            'brew' . $objTables->id  => array
+                            $objBrew->name  => array
                             (
                                 'tables'      => $objTables->fetchEach('name'),
                                // 'icon'        => 'system/modules/brew/assets/icon.png'
